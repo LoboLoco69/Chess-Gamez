@@ -162,8 +162,10 @@ newGameButton.addEventListener("click", () => {
     selectedSquare = null;
     legalTargets = [];
     moveList.innerHTML = "";
+    gameAlert.classList.add("hidden");
     drawBoard();
 });
+
 
 drawBoard();
 updateGameStatus();

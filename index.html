@@ -1,17 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Silent Chess</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silent Chess</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <h1>Silent Chess</h1>
-
-    <div id="board">
-        Chess board coming soon...
+  <header class="topbar">
+    <div class="brand">
+      <span class="crown">♛</span>
+      <span>Silent Chess</span>
     </div>
 
-    <script src="script.js"></script>
+    <div class="top-actions">
+      <span>Focus Mode</span>
+      <button class="toggle"></button>
+      <button class="icon-btn">⚙</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <aside class="sidebar">
+      <div class="nav-item active">♞ Play</div>
+      <div class="nav-item">♟ Puzzles</div>
+      <div class="nav-item">♜ Openings</div>
+      <div class="nav-item">♚ Stats</div>
+      <div class="nav-item">⚙ Settings</div>
+
+      <div class="silent-status">
+        <span class="dot"></span>
+        Silent Mode<br />
+        <small>On</small>
+      </div>
+    </aside>
+
+    <section class="center">
+      <div class="card board-card">
+        <div class="card-header">
+          <span>You vs Computer (Easy)</span>
+          <span class="online"><span class="dot"></span> Online</span>
+        </div>
+
+        <div id="board" class="chess-board"></div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card small-card">
+          <h3>Engine Evaluation</h3>
+          <p id="evaluation">Starting Position</p>
+        </div>
+
+        <div class="card small-card">
+          <h3>Depth</h3>
+          <p>-</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="right-panel">
+      <div class="card info-card">
+        <h3>Game Info</h3>
+        <p><span>Mode</span><br />You vs Computer</p>
+        <p><span>Difficulty</span><br />Easy</p>
+        <p><span>Game Time</span><br /><span id="timer">00:00:00</span></p>
+      </div>
+
+      <div class="card move-card">
+        <h3>Move List</h3>
+        <ol id="move-list"></ol>
+      </div>
+
+      <button id="new-game">↻ New Game</button>
+    </aside>
+  </main>
+
+  <footer>
+    Silent Chess v1.0 • Work hard. Play smart. Stay silent.
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

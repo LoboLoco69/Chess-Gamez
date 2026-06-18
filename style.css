@@ -163,3 +163,17 @@ footer {
     padding: 20px;
     color: #888;
 }
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.square:hover {
+    outline: 2px solid #d4af37;
+    outline-offset: -2px;
+}

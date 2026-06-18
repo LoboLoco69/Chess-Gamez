@@ -1,1 +1,14 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #1e1e1e;
+    color: white;
+}
 
+#board {
+    width: 480px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #2c2c2c;
+    border-radius: 10px;
+}

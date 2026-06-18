@@ -1,7 +1,7 @@
 const board = document.getElementById("board");
 const moveList = document.getElementById("move-list");
 const newGameButton = document.getElementById("new-game");
-
+const gameAlert = document.getElementById("game-alert");
 const game = new Chess();
 
 let selectedSquare = null;
@@ -89,6 +89,7 @@ function handleSquareClick(e) {
             .map(move => move.to);
 
         drawBoard();
+        updateGameStatus();
         return;
     }
 
@@ -96,6 +97,7 @@ function handleSquareClick(e) {
         selectedSquare = null;
         legalTargets = [];
         drawBoard();
+        updateGameStatus();
         return;
     }
 
@@ -114,6 +116,7 @@ function handleSquareClick(e) {
 }
 
     drawBoard();
+    updateGameStatus();
 }
 
 function coordsToSquare(row, col) {
@@ -151,6 +154,7 @@ function makeBotMove() {
 
     updateMoveList();
     drawBoard();
+    updateGameStatus();
 }
 
 newGameButton.addEventListener("click", () => {
@@ -162,3 +166,24 @@ newGameButton.addEventListener("click", () => {
 });
 
 drawBoard();
+updateGameStatus();
+
+function updateGameStatus() {
+    gameAlert.classList.add("hidden");
+
+    if (game.in_checkmate()) {
+        const winner = game.turn() === "w" ? "Black" : "White";
+        gameAlert.textContent = `Checkmate. ${winner} wins.`;
+        gameAlert.classList.remove("hidden");
+        return;
+    }
+
+    if (game.in_check()) {
+        gameAlert.textContent = "Check.";
+        gameAlert.classList.remove("hidden");
+
+        setTimeout(() => {
+            gameAlert.classList.add("hidden");
+        }, 1600);
+    }
+}

@@ -109,8 +109,9 @@ function handleSquareClick(e) {
     legalTargets = [];
 
     if (move) {
-        updateMoveList();
-    }
+    updateMoveList();
+    setTimeout(makeBotMove, 300);
+}
 
     drawBoard();
 }
@@ -135,6 +136,21 @@ function updateMoveList() {
 
         moveList.appendChild(li);
     }
+}
+
+function makeBotMove() {
+    if (game.game_over()) return;
+
+    const moves = game.moves();
+
+    if (moves.length === 0) return;
+
+    const randomMove = moves[Math.floor(Math.random() * moves.length)];
+
+    game.move(randomMove);
+
+    updateMoveList();
+    drawBoard();
 }
 
 newGameButton.addEventListener("click", () => {

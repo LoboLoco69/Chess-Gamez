@@ -1,3 +1,5 @@
+let playerColor = "white";
+
 const board = document.getElementById("board");
 
 let selectedSquare = null;
@@ -16,8 +18,18 @@ const position = [
 function drawBoard() {
     board.innerHTML = "";
 
-    for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
+    for (let displayRow = 0; displayRow < 8; displayRow++) {
+    for (let displayCol = 0; displayCol < 8; displayCol++) {
+
+        const row =
+            playerColor === "white"
+                ? displayRow
+                : 7 - displayRow;
+
+        const col =
+            playerColor === "white"
+                ? displayCol
+                : 7 - displayCol;
 
             const square = document.createElement("div");
 
@@ -29,7 +41,17 @@ function drawBoard() {
 
             square.classList.add("square");
 
-            square.textContent = position[row][col];
+            const piece = position[row][col];
+
+square.textContent = piece;
+
+if ("♙♖♘♗♕♔".includes(piece)) {
+    square.classList.add("white-piece");
+}
+
+if ("♟♜♞♝♛♚".includes(piece)) {
+    square.classList.add("black-piece");
+}
 
             square.dataset.row = row;
             square.dataset.col = col;

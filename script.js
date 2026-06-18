@@ -1,158 +1,148 @@
 const board = document.getElementById("board");
+const moveList = document.getElementById("move-list");
+const newGameButton = document.getElementById("new-game");
+
+const game = new Chess();
 
 let selectedSquare = null;
-let playerColor = "white";
 let legalTargets = [];
+let playerColor = "white";
 
-const position = [
-    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
-    ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"]
-];
+const pieceMap = {
+    p: "♟",
+    r: "♜",
+    n: "♞",
+    b: "♝",
+    q: "♛",
+    k: "♚",
+    P: "♙",
+    R: "♖",
+    N: "♘",
+    B: "♗",
+    Q: "♕",
+    K: "♔"
+};
 
 function drawBoard() {
     board.innerHTML = "";
 
     for (let displayRow = 0; displayRow < 8; displayRow++) {
         for (let displayCol = 0; displayCol < 8; displayCol++) {
-
             const row = playerColor === "white" ? displayRow : 7 - displayRow;
             const col = playerColor === "white" ? displayCol : 7 - displayCol;
 
+            const squareName = coordsToSquare(row, col);
+            const piece = game.get(squareName);
+
             const square = document.createElement("div");
-            const piece = position[row][col];
 
-            square.classList.add((displayRow + displayCol) % 2 === 0 ? "square-light" : "square-dark");
+            square.classList.add(
+                (displayRow + displayCol) % 2 === 0
+                    ? "square-light"
+                    : "square-dark"
+            );
+
             square.classList.add("square");
+            square.dataset.square = squareName;
 
-            square.dataset.row = row;
-            square.dataset.col = col;
+            if (piece) {
+                const symbol = piece.color === "w"
+                    ? pieceMap[piece.type.toUpperCase()]
+                    : pieceMap[piece.type];
 
-            square.textContent = piece;
+                square.textContent = symbol;
 
-            if ("♙♖♘♗♕♔".includes(piece)) {
-                square.classList.add("white-piece");
+                square.classList.add(
+                    piece.color === "w" ? "white-piece" : "black-piece"
+                );
             }
 
-            if ("♟♜♞♝♛♚".includes(piece)) {
-                square.classList.add("black-piece");
-            }
-
-            if (
-                selectedSquare &&
-                selectedSquare.row === row &&
-                selectedSquare.col === col
-            ) {
+            if (selectedSquare === squareName) {
                 square.classList.add("selected");
             }
 
-            if (isLegalTarget(row, col)) {
+            if (legalTargets.includes(squareName)) {
                 square.classList.add("legal-target");
             }
 
             square.addEventListener("click", handleSquareClick);
-
             board.appendChild(square);
         }
     }
 }
 
 function handleSquareClick(e) {
-    const row = Number(e.currentTarget.dataset.row);
-    const col = Number(e.currentTarget.dataset.col);
-    const piece = position[row][col];
+    const squareName = e.currentTarget.dataset.square;
+    const piece = game.get(squareName);
 
     if (!selectedSquare) {
-        if (piece === "") return;
+        if (!piece) return;
 
-        selectedSquare = { row, col };
-        legalTargets = getBasicLegalTargets(row, col);
+        const playerTurn = game.turn() === "w" ? "white" : "black";
+        const selectedColor = piece.color === "w" ? "white" : "black";
+
+        if (selectedColor !== playerTurn) return;
+
+        selectedSquare = squareName;
+        legalTargets = game
+            .moves({ square: squareName, verbose: true })
+            .map(move => move.to);
 
         drawBoard();
         return;
     }
 
-    if (selectedSquare.row === row && selectedSquare.col === col) {
+    if (selectedSquare === squareName) {
         selectedSquare = null;
         legalTargets = [];
         drawBoard();
         return;
     }
 
-    if (!isLegalTarget(row, col)) {
-        selectedSquare = null;
-        legalTargets = [];
-        drawBoard();
-        return;
-    }
-
-    const selectedPiece = position[selectedSquare.row][selectedSquare.col];
-
-    position[row][col] = selectedPiece;
-    position[selectedSquare.row][selectedSquare.col] = "";
+    const move = game.move({
+        from: selectedSquare,
+        to: squareName,
+        promotion: "q"
+    });
 
     selectedSquare = null;
     legalTargets = [];
 
+    if (move) {
+        updateMoveList();
+    }
+
     drawBoard();
 }
 
-function isLegalTarget(row, col) {
-    return legalTargets.some(square => square.row === row && square.col === col);
+function coordsToSquare(row, col) {
+    const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+    return files[col] + (8 - row);
 }
 
-function getBasicLegalTargets(row, col) {
-    const targets = [];
-    const piece = position[row][col];
+function updateMoveList() {
+    moveList.innerHTML = "";
 
-    const directions = [
-        { row: -1, col: 0 },
-        { row: 1, col: 0 },
-        { row: 0, col: -1 },
-        { row: 0, col: 1 },
-        { row: -1, col: -1 },
-        { row: -1, col: 1 },
-        { row: 1, col: -1 },
-        { row: 1, col: 1 }
-    ];
+    const history = game.history();
 
-    // Temporary: knights get knight-looking moves
-    if (piece === "♘" || piece === "♞") {
-        const knightMoves = [
-            { row: -2, col: -1 },
-            { row: -2, col: 1 },
-            { row: -1, col: -2 },
-            { row: -1, col: 2 },
-            { row: 1, col: -2 },
-            { row: 1, col: 2 },
-            { row: 2, col: -1 },
-            { row: 2, col: 1 }
-        ];
+    for (let i = 0; i < history.length; i += 2) {
+        const li = document.createElement("li");
 
-        knightMoves.forEach(move => {
-            addTargetIfOnBoard(targets, row + move.row, col + move.col);
-        });
+        const whiteMove = history[i] || "";
+        const blackMove = history[i + 1] || "";
 
-        return targets;
+        li.textContent = `${whiteMove} ${blackMove}`;
+
+        moveList.appendChild(li);
     }
-
-    // Temporary: everyone else can move one square
-    directions.forEach(direction => {
-        addTargetIfOnBoard(targets, row + direction.row, col + direction.col);
-    });
-
-    return targets;
 }
 
-function addTargetIfOnBoard(targets, row, col) {
-    if (row < 0 || row > 7 || col < 0 || col > 7) return;
-
-    targets.push({ row, col });
-}
+newGameButton.addEventListener("click", () => {
+    game.reset();
+    selectedSquare = null;
+    legalTargets = [];
+    moveList.innerHTML = "";
+    drawBoard();
+});
 
 drawBoard();

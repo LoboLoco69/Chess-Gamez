@@ -1,15 +1,31 @@
 const board = document.getElementById("board");
 
-for (let row = 0; row < 8; row++) {
-    for (let col = 0; col < 8; col++) {
-        const square = document.createElement("div");
+const startingPosition = [
+    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
+    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
+    ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"]
+];
 
-        if ((row + col) % 2 === 0) {
-            square.classList.add("square-light");
-        } else {
-            square.classList.add("square-dark");
+function drawBoard() {
+    board.innerHTML = "";
+
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const square = document.createElement("div");
+
+            square.classList.add((row + col) % 2 === 0 ? "square-light" : "square-dark");
+            square.classList.add("square");
+
+            square.textContent = startingPosition[row][col];
+
+            board.appendChild(square);
         }
-
-        board.appendChild(square);
     }
 }
+
+drawBoard();
